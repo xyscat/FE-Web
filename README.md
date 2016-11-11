@@ -165,3 +165,90 @@ grunt.initConfig ({
 
 这个过程叫测试驱动开发（Test-Driven Development,TDD）。
 
+
+## jQuery的不足
+
+jQuery库实现了浏览器的兼容性，提供了灵活的API。
+
+## MVC
+
+M:保存渲染视图所需的信息。
+
+V:负责渲染模型中的数据，让用户和模型交互。
+
+C:在渲染视图前查询模型，管理用户和各组件之间的交互。
+
+## Backbone
+
+Backbone、Angular、React。
+
+**安装Backbone**
+
+`npm init`创建package.json文件;
+
+`npm install backbone --save`安装backbone；
+
+Backbone需要一个处理DOM的库，jQuery、Zepto。`npm install jquery --save`安装jQuery；
+
+使用Backbone之前，要把jQuery库赋值给Backbone.$：
+
+```
+var Backbone = require('backbone');
+Backbone.$ = require('jquery');
+```
+
+Backbone使用jQuery和DOM交互，处理事件和Ajax请求。
+
+## 使用Grunt和Browserify编译Backbone模块
+
+```
+// Gruntfile.js文件中Browserify的配置
+{
+	browserify: {
+		debug: {
+			files: {'build/js/app.js': 'js/app.js'},
+			options: {
+				debug: true
+			}
+		}
+	}
+}
+```
+
+改动，监视变动，Grunt重新构建，打包应用。
+
+```
+// 监视变动使用grunt-contrib-watch包
+{
+	watch: {
+		app: {
+			// tasks属性的值是files中监视的文件发生变化时要执行的任务
+			files: 'app/**/*.js',
+			tasks: ['browserify']
+		}
+	}
+}
+```
+
+使用brfs（浏览器文件系统）的转换方式，让Browserify把模块中的源码转换成适合在浏览器中运行的格式。
+
+```
+var fs = require('fs');
+var template = fs.readFileSync(_dirname + '/template.html', {encoding: 'utf8'});
+
+console.log(template);
+```
+
+上面的代码不能在浏览器运行，因为浏览器不能访问服务器文件系统中的文件。可以在grunt-browserify包的配置选项中添加brfs转换方式。
+
+```
+options: {
+	transform: ['brfs'],
+	debug: true
+}
+```
+
+`npm install brfs --save-dev`在本地安装brfs包。
+
+现在Grunt会使用Browserify编译CommonJS模块。
+
